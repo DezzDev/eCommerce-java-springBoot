@@ -16,10 +16,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+// with Entity annotation, is not safe to use @Data because it will create a circular reference
+//  when using the toString method, so we will use @Getter and @Setter instead
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Product {
@@ -35,6 +35,15 @@ public class Product {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "category_id")
 	private Category category;
+
+	public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {
+		this.name = name;
+		this.brand = brand;
+		this.price = price;
+		this.inventory = inventory;
+		this.description = description;
+		this.category = category;
+	}
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Image> images;

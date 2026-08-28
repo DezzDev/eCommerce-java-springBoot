@@ -1,10 +1,14 @@
 package com.ecommerce.dream_shops.service.product;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
+import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.model.Product;
+import com.ecommerce.dream_shops.repository.CategoryRepository;
 import com.ecommerce.dream_shops.repository.ProductRepository;
+import com.ecommerce.dream_shops.request.AddProductRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,11 +16,32 @@ import lombok.RequiredArgsConstructor;
 public class ProductService implements IProductService {
 
 	private final ProductRepository productRepository;
+	private final CategoryRepository categoryRepository;
 
 	@Override
-	public Product addProduct(Product product) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'addProduct'");
+	public Product addProduct(AddProductRequest productRequest) {
+		// check if category is found in the db
+		// if yes, set it as the product category
+		// if not, create a new category and set it as the product category
+		Category category = Optional.ofNullable(categoryRepository.findByName(productRequest.getCategory().getName()))
+			.orElseGet(()-> {
+				Category newCategory = new Category(productRequest.getCategory().getName());
+				return categoryRepository.save(newCategory);
+			});
+		
+		productRequest.setCategory(category);
+		return productRepository.save(createProduct(productRequest, category));
+	}
+
+	private Product createProduct(AddProductRequest productRequest, Category category){ 
+   return new Product(
+		productRequest.getName(),
+		productRequest.getBrand(),
+		productRequest.getPrice(),
+		productRequest.getInventory(),
+		productRequest.getDescription(),
+		category
+	 );
 	}
 
 	@Override
