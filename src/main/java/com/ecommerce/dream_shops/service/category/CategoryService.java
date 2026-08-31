@@ -1,17 +1,19 @@
 package com.ecommerce.dream_shops.service.category;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.dream_shops.exceptions.AlreadyExistsException;
 import com.ecommerce.dream_shops.exceptions.CategoryNotFoundException;
 import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.repository.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service 
-@RequiredArgsConstructor 
+@Service
+@RequiredArgsConstructor
 public class CategoryService implements ICategoryService {
 
 	private final CategoryRepository categoryRepository;
@@ -19,13 +21,13 @@ public class CategoryService implements ICategoryService {
 	@Override
 	public Category getCategoryById(Long id) {
 		return categoryRepository.findById(id)
-			.orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+				.orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 	}
 
 	@Override
 	public Category getCategoryByName(String name) {
-		return categoryRepository.findByName(name); 
-			
+		return categoryRepository.findByName(name);
+
 	}
 
 	@Override
@@ -35,21 +37,30 @@ public class CategoryService implements ICategoryService {
 
 	@Override
 	public Category addCategory(Category category) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'addCategory'");
+		return Optional.ofNullable(category)
+			.filter( c -> !categoryRepository.existsByName(c.getName()))
+			.map(categoryRepository::save)
+			.orElseThrow(()-> new AlreadyExistsException(category.getName() + "Category already exists"));
 	}
 
 	@Override
-	public Category updateCategory(Category category) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'updateCategory'");
+	public Category updateCategory(Category category, Long id) {
+
+		return Optional.ofNullable(getCategoryById(id))
+			.map(oldCategory -> {
+				oldCategory.setName(category.getName());
+				return categoryRepository.save(oldCategory);
+	})
+			.orElseThrow(()-> new CategoryNotFoundException("Category  not found"));
 	}
 
 	@Override
 	public void deleteCategoryById(Long id) {
 		categoryRepository.findById(id)
-			.ifPresentOrElse(categoryRepository::delete, 
-				() -> { throw new CategoryNotFoundException("Category not found"); });
+				.ifPresentOrElse(categoryRepository::delete,
+						() -> {
+							throw new CategoryNotFoundException("Category not found");
+						});
 	}
 
 }
