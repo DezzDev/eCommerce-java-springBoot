@@ -3,6 +3,8 @@ package com.ecommerce.dream_shops.service.product;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.model.Product;
@@ -13,6 +15,7 @@ import com.ecommerce.dream_shops.request.ProductUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
+@Service 
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
 
