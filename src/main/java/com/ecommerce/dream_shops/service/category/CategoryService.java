@@ -44,7 +44,7 @@ public class CategoryService implements ICategoryService {
 	}
 
 	@Override
-	public Category updateCategory(Category category, Long id) {
+	public Category updateCategory(Long id, Category category) {
 
 		return Optional.ofNullable(getCategoryById(id))
 			.map(oldCategory -> {
