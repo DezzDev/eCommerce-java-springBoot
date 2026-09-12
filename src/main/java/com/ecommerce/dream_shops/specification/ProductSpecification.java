@@ -1,0 +1,24 @@
+package com.ecommerce.dream_shops.specification;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.ecommerce.dream_shops.model.Product;
+
+public class ProductSpecification {
+
+	public static Specification<Product> hasBrand(String brand) {
+		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("brand"), brand);
+	}
+
+	public static Specification<Product> hasName(String name) {
+		return (root, query, criteriaBuilder) -> criteriaBuilder.like(
+				criteriaBuilder.lower(root.get("name")),
+				"%" + name.toLowerCase() + "%");
+	}
+
+	public static Specification<Product> hasCategory(String category) {
+		return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
+				root.get("category").get("name"),
+				category);
+	}
+}
