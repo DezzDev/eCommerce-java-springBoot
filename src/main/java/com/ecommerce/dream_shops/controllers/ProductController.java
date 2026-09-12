@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.dream_shops.dto.ProductDto;
-import com.ecommerce.dream_shops.dto.request.AddProductRequest;
-import com.ecommerce.dream_shops.dto.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.dto.request.ProductAddRequest;
+import com.ecommerce.dream_shops.dto.request.ProductUpdateRequest;
 import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.service.product.IProductService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -63,7 +64,7 @@ public class ProductController {
 	 * @return ResponseEntity<ApiResponse> the created product
 	 */
 	@PostMapping("/")
-	public ResponseEntity<ApiResponse> createProduct(@RequestBody AddProductRequest product) {
+	public ResponseEntity<ApiResponse> createProduct(@RequestBody ProductAddRequest product) {
 		
 		try {
 			ProductDto createdProduct = productService.addProduct(product);
@@ -80,8 +81,8 @@ public class ProductController {
 	 * @param product
 	 * @return ResponseEntity<ApiResponse> the updated product
 	 */
-	@PostMapping("/{id}")
-	public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest product) {
+	@PutMapping("/{id}")
+	public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateRequest product) {
 		try {
 			ProductDto updatedProduct = productService.updateProduct(id, product);
 			return ResponseEntity.ok(new ApiResponse("Success", updatedProduct));

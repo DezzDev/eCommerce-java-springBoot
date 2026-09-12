@@ -1,5 +1,6 @@
 package com.ecommerce.dream_shops.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -22,9 +23,14 @@ public class Category {
 	private String name;
 
 	@OneToMany(mappedBy = "category")
-	private List<Product> products;
+	private List<Product> products = new ArrayList<>();
 
 	public Category(String name) {
+		this.name = name;
+	}
+
+	public Category(Long id, String name) {
+		this.id = id;
 		this.name = name;
 	}
 }

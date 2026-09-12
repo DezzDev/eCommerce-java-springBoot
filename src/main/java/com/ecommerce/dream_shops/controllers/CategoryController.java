@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.dream_shops.dto.CategoryDto;
+import com.ecommerce.dream_shops.dto.request.CategoryAddRequest;
+import com.ecommerce.dream_shops.dto.request.CategoryUpdateRequest;
 import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.AlreadyExistsException;
 import com.ecommerce.dream_shops.exceptions.CategoryNotFoundException;
-import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.service.category.ICategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ public class CategoryController {
 	@GetMapping("/")
 	public ResponseEntity<ApiResponse> getAllCategories() {
 		try {
-			List<Category> categories = categoryService.getAllCategories();
+			List<CategoryDto> categories = categoryService.getAllCategories();
 			return ResponseEntity.ok(new ApiResponse("Success", categories));
 		} catch (Exception e) {
 			if (e instanceof CategoryNotFoundException) {
@@ -46,9 +48,9 @@ public class CategoryController {
 
 	/** Creates a new category. */
 	@PostMapping("/")
-	public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category){
+	public ResponseEntity<ApiResponse> addCategory(@RequestBody CategoryAddRequest category){
 		try {
-			Category savedCategory = categoryService.addCategory(category);
+			CategoryDto savedCategory = categoryService.addCategory(category);
 			return ResponseEntity.ok(new ApiResponse("Success", savedCategory));
 		} catch (AlreadyExistsException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -60,7 +62,7 @@ public class CategoryController {
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
 		try {
-			Category category = categoryService.getCategoryById(id);
+			CategoryDto category = categoryService.getCategoryById(id);
 			return ResponseEntity.ok(new ApiResponse("Success", category));
 		} catch (CategoryNotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -72,7 +74,7 @@ public class CategoryController {
 	@GetMapping("/name/{name}")
 	public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
 		try {
-			Category category = categoryService.getCategoryByName(name);
+			CategoryDto category = categoryService.getCategoryByName(name);
 			return ResponseEntity.ok(new ApiResponse("Success", category));
 		} catch (CategoryNotFoundException e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -95,10 +97,10 @@ public class CategoryController {
 
 	/** Update Category by its ID */
 	@PutMapping("/{id}")
-	public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+	public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody CategoryUpdateRequest category) {
 		
 		try {
-			Category updatedCategory = categoryService.updateCategory(id, category);
+			CategoryDto updatedCategory = categoryService.updateCategory(id, category);
 			return ResponseEntity.ok(new ApiResponse("Success", updatedCategory));
 		} catch (CategoryNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)

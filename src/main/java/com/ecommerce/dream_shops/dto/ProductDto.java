@@ -1,6 +1,7 @@
 package com.ecommerce.dream_shops.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class ProductDto {
 	private int inventory;
 	private String description;
 	private CategoryDto category;
+	private List<ImageDto> images;
 
 	public ProductDto(Long id, String name, String brand, BigDecimal price, int inventory, String description,
 			CategoryDto category) {

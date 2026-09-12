@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.dream_shops.dto.CategoryDto;
 import com.ecommerce.dream_shops.dto.ProductDto;
-import com.ecommerce.dream_shops.dto.request.AddProductRequest;
-import com.ecommerce.dream_shops.dto.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.dto.request.ProductAddRequest;
+import com.ecommerce.dream_shops.dto.request.ProductUpdateRequest;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.model.Product;
@@ -38,7 +38,7 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public ProductDto addProduct(AddProductRequest productRequest) {
+	public ProductDto addProduct(ProductAddRequest productRequest) {
 		// check if category is found in the db
 		// if yes, set it as the product category
 		// if not, create a new category and set it as the product category
@@ -54,7 +54,7 @@ public class ProductService implements IProductService {
 		return productToProductDto(product);
 	}
 
-	private Product createProduct(AddProductRequest productRequest, Category category){ 
+	private Product createProduct(ProductAddRequest productRequest, Category category){ 
    return new Product(
 		productRequest.getName(),
 		productRequest.getBrand(),
@@ -73,7 +73,7 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
+	public ProductDto updateProduct(Long productId, ProductUpdateRequest request) {
 		Product product = productRepository.findById(productId)
 			.map(existingProduct -> updateExistingProduct(existingProduct, request))
 			.map(productRepository::save)
@@ -83,7 +83,7 @@ public class ProductService implements IProductService {
 		
 	}
 
-	private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request){
+	private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
 		existingProduct.setName(request.getName());
 		existingProduct.setBrand(request.getBrand());
 		existingProduct.setPrice(request.getPrice());

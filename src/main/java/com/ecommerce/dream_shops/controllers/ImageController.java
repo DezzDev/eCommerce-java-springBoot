@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecommerce.dream_shops.dto.ImageDto;
 import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.ImageNotFoundException;
-import com.ecommerce.dream_shops.model.Image;
 import com.ecommerce.dream_shops.service.Image.IImageService;
 
 import lombok.RequiredArgsConstructor;
@@ -54,7 +53,7 @@ public class ImageController {
 	 /** Downloads an image by its ID. */
 	 @GetMapping("/{id}")
 	 public ResponseEntity<Resource> downloadImage(@PathVariable Long id) throws SQLException{
-		Image image = imageService.getImageById(id);
+		ImageDto image = imageService.getImageById(id);
 		ByteArrayResource resource = new ByteArrayResource(image.getImage().getBytes(1, (int) image.getImage().length()));
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
 			.header(HttpHeaders.CONTENT_DISPOSITION,  "attachment; filename=\"" +  image.getFileName() + "\"" )
@@ -65,7 +64,7 @@ public class ImageController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse> updateImage(@PathVariable Long id, @RequestBody MultipartFile file){
 		try{
-			Image image = imageService.getImageById(id);
+			ImageDto image = imageService.getImageById(id);
 			if(image != null){
 				imageService.updateImage(file, id);
 				return ResponseEntity.ok(new ApiResponse("Update success", null));
@@ -85,7 +84,7 @@ public class ImageController {
 	@DeleteMapping ("/{id}")
 	public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long id){
 		try{
-			Image image = imageService.getImageById(id);
+			ImageDto image = imageService.getImageById(id);
 			if(image != null){
 				imageService.deleteImageById(id);
 				return ResponseEntity.ok(new ApiResponse("Delete success", null));

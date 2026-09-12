@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecommerce.dream_shops.dto.ImageDto;
 import com.ecommerce.dream_shops.exceptions.ImageNotFoundException;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
+import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.model.Image;
 import com.ecommerce.dream_shops.model.Product;
 import com.ecommerce.dream_shops.repository.ImageRepository;
@@ -26,12 +27,22 @@ public class ImageService implements IImageService {
 
 	private final ImageRepository imageRepository;
 	private final ProductRepository productRepository;
+
+	private ImageDto imageToImageDto(Image image) {
+		ImageDto imageDto = new ImageDto();
+		imageDto.setId(image.getId());
+		imageDto.setFileName(image.getFileName());
+		imageDto.setDownloadUrl(image.getDownloadUrl());
+		return imageDto;
+	}
 	 
 	@Override
-	public Image getImageById(Long id) {
-		return imageRepository
+	public ImageDto getImageById(Long id) {
+		Image image = imageRepository
 			.findById(id)
 			.orElseThrow(() -> new ImageNotFoundException("Image not found")); 
+		
+		return imageToImageDto(image);
 	}
 
 	@Override
@@ -69,8 +80,8 @@ public class ImageService implements IImageService {
 				imageRepository.save(savedImage);
 
 				ImageDto imageDto = new ImageDto();
-				imageDto.setImageId(savedImage.getId());
-				imageDto.setImageName(savedImage.getFileName());
+				imageDto.setId(savedImage.getId());
+				imageDto.setFileName(savedImage.getFileName());
 				imageDto.setDownloadUrl(savedImage.getDownloadUrl());
 				savedImageDtos.add(imageDto);
 
@@ -84,11 +95,39 @@ public class ImageService implements IImageService {
 
 	@Override
 	public void updateImage(MultipartFile file, Long imageId) {
-		Image image = getImageById(imageId);
+		ImageDto imageDto = getImageById(imageId);
+		Image image = new Image();
 		try {
+			image.setId(imageDto.getId());
 			image.setFileName(file.getOriginalFilename());
 			image.setFileType(file.getContentType());
 			image.setImage(new SerialBlob(file.getBytes()));
+			image.setDownloadUrl(imageDto.getDownloadUrl());
+			image.setProduct(
+				new Product(
+					imageDto.getProduct().getId(),
+					imageDto.getProduct().getName(),
+					imageDto.getProduct().getBrand(),
+					imageDto.getProduct().getPrice(),
+					imageDto.getProduct().getInventory(),
+					imageDto.getProduct().getDescription(),
+					new Category(
+						imageDto.getProduct().getCategory().getId(),
+						imageDto.getProduct().getCategory().getName()
+					),
+					imageDto.getProduct().getImages().stream()
+						.map(imgDto -> {
+							Image img = new Image();
+							img.setId(imgDto.getId());
+							img.setFileName(imgDto.getFileName());
+							img.setFileType(imgDto.getFileType());
+							img.setImage(imgDto.getImage());
+							img.setDownloadUrl(imgDto.getDownloadUrl());
+							return img;
+						})
+						.toList()
+				)
+			);
 			imageRepository.save(image);
 
 		} catch (IOException | SQLException e) {
