@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.model.Product;
 import com.ecommerce.dream_shops.request.AddProductRequest;
+import com.ecommerce.dream_shops.request.UpdateProductRequest;
 import com.ecommerce.dream_shops.responses.ApiResponse;
 import com.ecommerce.dream_shops.service.product.IProductService;
 
@@ -71,5 +73,38 @@ public class ProductController {
 				.body(new ApiResponse(e.getMessage(), null));
 		}
 	}
+
+	/**
+	 * Updates an existing product.
+	 * @param id
+	 * @param product
+	 * @return ResponseEntity<ApiResponse> the updated product
+	 */
+	@PostMapping("/{id}")
+	public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest product) {
+		try {
+			Product updatedProduct = productService.updateProduct(id, product);
+			return ResponseEntity.ok(new ApiResponse("Success", updatedProduct));
+		} catch (ProductNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(e.getMessage(), null));
+		} 
+	}
+
+	/**
+	 * Deletes a product by its ID.
+	 * @param id
+	 * @return ResponseEntity<ApiResponse> a message indicating the result of the deletion
+	 */
+	@DeleteMapping ("/{id}")
+	public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
+		try {
+			productService.deleteProduct(id);
+			return ResponseEntity.ok(new ApiResponse("Success", null));
+		} catch (ProductNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ApiResponse(e.getMessage(), null));
+		}
+	}
 	
-}
+} 

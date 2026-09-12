@@ -6,7 +6,7 @@ import com.ecommerce.dream_shops.model.Category;
 import lombok.Data;
 
 @Data
-public class ProductUpdateRequest {
+public class UpdateProductRequest {
 	private Long id;
 	private String name;
 	private String brand;

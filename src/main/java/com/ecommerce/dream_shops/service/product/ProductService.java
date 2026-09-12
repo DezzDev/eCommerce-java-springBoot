@@ -11,7 +11,7 @@ import com.ecommerce.dream_shops.model.Product;
 import com.ecommerce.dream_shops.repository.CategoryRepository;
 import com.ecommerce.dream_shops.repository.ProductRepository;
 import com.ecommerce.dream_shops.request.AddProductRequest;
-import com.ecommerce.dream_shops.request.ProductUpdateRequest;
+import com.ecommerce.dream_shops.request.UpdateProductRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,7 +55,7 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public Product updateProduct(ProductUpdateRequest request, Long productId) {
+	public Product updateProduct(Long productId, UpdateProductRequest request) {
 
 		return productRepository.findById(productId)
 			.map(existingProduct -> updateExistingProduct(existingProduct, request))
@@ -64,7 +64,7 @@ public class ProductService implements IProductService {
 		
 	}
 
-	private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
+	private Product updateExistingProduct(Product existingProduct, UpdateProductRequest request){
 		existingProduct.setName(request.getName());
 		existingProduct.setBrand(request.getBrand());
 		existingProduct.setPrice(request.getPrice());
