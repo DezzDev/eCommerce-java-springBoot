@@ -5,13 +5,16 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.dream_shops.dto.CategoryDto;
+import com.ecommerce.dream_shops.dto.ProductDto;
+import com.ecommerce.dream_shops.dto.request.AddProductRequest;
+import com.ecommerce.dream_shops.dto.request.UpdateProductRequest;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.model.Category;
 import com.ecommerce.dream_shops.model.Product;
 import com.ecommerce.dream_shops.repository.CategoryRepository;
 import com.ecommerce.dream_shops.repository.ProductRepository;
-import com.ecommerce.dream_shops.request.AddProductRequest;
-import com.ecommerce.dream_shops.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.utils.ProductSearchCriteria;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,8 +25,20 @@ public class ProductService implements IProductService {
 	private final ProductRepository productRepository;
 	private final CategoryRepository categoryRepository;
 
+	private ProductDto productToProductDto(Product product) {
+		return new ProductDto(
+			product.getId(),
+			product.getName(),
+			product.getBrand(),
+			product.getPrice(),
+			product.getInventory(),
+			product.getDescription(),
+			new CategoryDto(product.getCategory().getId(), product.getCategory().getName())
+		);
+	}
+
 	@Override
-	public Product addProduct(AddProductRequest productRequest) {
+	public ProductDto addProduct(AddProductRequest productRequest) {
 		// check if category is found in the db
 		// if yes, set it as the product category
 		// if not, create a new category and set it as the product category
@@ -34,7 +49,9 @@ public class ProductService implements IProductService {
 			});
 		
 		productRequest.setCategory(category);
-		return productRepository.save(createProduct(productRequest, category));
+		Product product = productRepository.save(createProduct(productRequest, category));
+
+		return productToProductDto(product);
 	}
 
 	private Product createProduct(AddProductRequest productRequest, Category category){ 
@@ -49,18 +66,20 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public Product getProductById(Long id) {
-	 return productRepository.findById(id)
-		.orElseThrow(()-> new ProductNotFoundException("Product not found"));
+	public ProductDto getProductById(Long id) {
+		Product product = productRepository.findById(id)
+			.orElseThrow(()-> new ProductNotFoundException("Product not found"));
+	 return productToProductDto(product);
 	}
 
 	@Override
-	public Product updateProduct(Long productId, UpdateProductRequest request) {
-
-		return productRepository.findById(productId)
+	public ProductDto updateProduct(Long productId, UpdateProductRequest request) {
+		Product product = productRepository.findById(productId)
 			.map(existingProduct -> updateExistingProduct(existingProduct, request))
 			.map(productRepository::save)
 			.orElseThrow(()-> new ProductNotFoundException("Product not found"));
+
+		return productToProductDto(product);
 		
 	}
 
@@ -85,33 +104,18 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public List<Product> getAllProducts() {
-		return productRepository.findAll();
+	public List<ProductDto> getAllProducts() {
+		List<Product> products =  productRepository.findAll();
+		return products.stream()
+			.map(this::productToProductDto)
+			.toList();
 	}
 
+	
 	@Override
-	public List<Product> getProductsByCategory(String category) {
-		return productRepository.findByCategoryName(category);
-	}
-
-	@Override
-	public List<Product> getProductsByBrand(String brand) {
-		return productRepository.findByBrand(brand);
-	}
-
-	@Override
-	public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-		return productRepository.findByCategoryNameAndBrand(category, brand);
-	}
-
-	@Override
-	public List<Product> getProductsByName(String name) {
-		return productRepository.findByName(name);
-	}
-
-	@Override
-	public List<Product> getProductsByBrandAndName(String brand, String name) {
-		return productRepository.findByBrandAndName(brand, name);
+	public List<ProductDto> searchProducts(ProductSearchCriteria criteria) {
+		
+		return null;
 	}
 
 	@Override

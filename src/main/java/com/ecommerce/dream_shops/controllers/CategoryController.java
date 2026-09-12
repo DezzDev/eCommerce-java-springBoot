@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.AlreadyExistsException;
 import com.ecommerce.dream_shops.exceptions.CategoryNotFoundException;
 import com.ecommerce.dream_shops.model.Category;
-import com.ecommerce.dream_shops.responses.ApiResponse;
 import com.ecommerce.dream_shops.service.category.ICategoryService;
 
 import lombok.RequiredArgsConstructor;

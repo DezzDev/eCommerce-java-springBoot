@@ -12,10 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.dream_shops.dto.ImageDto;
 import com.ecommerce.dream_shops.exceptions.ImageNotFoundException;
+import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.model.Image;
 import com.ecommerce.dream_shops.model.Product;
 import com.ecommerce.dream_shops.repository.ImageRepository;
-import com.ecommerce.dream_shops.service.product.ProductService;
+import com.ecommerce.dream_shops.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ImageService implements IImageService {
 
 	private final ImageRepository imageRepository;
-	private final ProductService productService;
+	private final ProductRepository productRepository;
 	 
 	@Override
 	public Image getImageById(Long id) {
@@ -45,7 +46,9 @@ public class ImageService implements IImageService {
 	@Override
 	public List<ImageDto> saveImages(List<MultipartFile> files, Long productId) {
 
-		 Product product= productService.getProductById(productId);
+		 Product product = productRepository.findById(productId)
+			.orElseThrow(()-> new ProductNotFoundException("Product not found"));
+
 		 List<ImageDto> savedImageDtos = new ArrayList<>();
 
 		 for(MultipartFile file : files){

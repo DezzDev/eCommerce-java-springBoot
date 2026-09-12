@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecommerce.dream_shops.dto.ImageDto;
+import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.ImageNotFoundException;
 import com.ecommerce.dream_shops.model.Image;
-import com.ecommerce.dream_shops.responses.ApiResponse;
 import com.ecommerce.dream_shops.service.Image.IImageService;
 
 import lombok.RequiredArgsConstructor;

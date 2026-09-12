@@ -2,21 +2,18 @@ package com.ecommerce.dream_shops.service.product;
 
 import java.util.List;
 
-import com.ecommerce.dream_shops.model.Product;
-import com.ecommerce.dream_shops.request.AddProductRequest;
-import com.ecommerce.dream_shops.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.dto.request.AddProductRequest;
+import com.ecommerce.dream_shops.dto.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.dto.ProductDto;
+import com.ecommerce.dream_shops.utils.ProductSearchCriteria;
 public interface IProductService {
 
-	Product addProduct(AddProductRequest product);	
-	Product getProductById(Long id);	
-	Product updateProduct(Long productId, UpdateProductRequest request);	
+	ProductDto addProduct(AddProductRequest product);	
+	ProductDto getProductById(Long id);	
+	ProductDto updateProduct(Long productId, UpdateProductRequest request);	
 	void deleteProduct(Long id);
-	List<Product> getAllProducts();
-	List<Product> getProductsByCategory(String category);
-	List<Product> getProductsByBrand(String brand);
-	List<Product> getProductsByCategoryAndBrand(String category, String brand);
-	List<Product> getProductsByName(String name);
-	List<Product> getProductsByBrandAndName(String brand, String name);
+	List<ProductDto> getAllProducts();
+	List<ProductDto> searchProducts(ProductSearchCriteria criteria);
 	Long countProductsByBrandAndName(String brand, String name);
 
 

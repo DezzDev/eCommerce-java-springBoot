@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.dream_shops.dto.ProductDto;
+import com.ecommerce.dream_shops.dto.request.AddProductRequest;
+import com.ecommerce.dream_shops.dto.request.UpdateProductRequest;
+import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
-import com.ecommerce.dream_shops.model.Product;
-import com.ecommerce.dream_shops.request.AddProductRequest;
-import com.ecommerce.dream_shops.request.UpdateProductRequest;
-import com.ecommerce.dream_shops.responses.ApiResponse;
 import com.ecommerce.dream_shops.service.product.IProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class ProductController {
 	@GetMapping("/")
 	public ResponseEntity<ApiResponse> getAllProducts(){
 		
-			List<Product> products = productService.getAllProducts();
+			List<ProductDto> products = productService.getAllProducts();
 			return ResponseEntity.ok(new ApiResponse("Success", products));
 		
 	}
@@ -49,7 +49,7 @@ public class ProductController {
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
 		try {
-			Product product = productService.getProductById(id);
+			ProductDto product = productService.getProductById(id);
 			return ResponseEntity.ok(new ApiResponse("Success", product));
 		} catch (ProductNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -66,7 +66,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> createProduct(@RequestBody AddProductRequest product) {
 		
 		try {
-			Product createdProduct = productService.addProduct(product);
+			ProductDto createdProduct = productService.addProduct(product);
 			return ResponseEntity.ok(new ApiResponse("Success", createdProduct));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -83,7 +83,7 @@ public class ProductController {
 	@PostMapping("/{id}")
 	public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long id, @RequestBody UpdateProductRequest product) {
 		try {
-			Product updatedProduct = productService.updateProduct(id, product);
+			ProductDto updatedProduct = productService.updateProduct(id, product);
 			return ResponseEntity.ok(new ApiResponse("Success", updatedProduct));
 		} catch (ProductNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
