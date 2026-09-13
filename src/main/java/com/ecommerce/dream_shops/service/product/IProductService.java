@@ -14,7 +14,7 @@ public interface IProductService {
 	void deleteProduct(Long id);
 	List<ProductDto> getAllProducts();
 	List<ProductDto> searchProducts(ProductSearchCriteria criteria);
-	Long countProductsByBrandAndName(String brand, String name);
+	Long countProducts(ProductSearchCriteria criteria);
 
 
 }

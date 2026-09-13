@@ -155,8 +155,28 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public Long countProductsByBrandAndName(String brand, String name) {
-		return productRepository.countByBrandAndName(brand, name);
+	public Long countProducts(ProductSearchCriteria criteria) {
+		 Specification<Product> specification = Specification.allOf();
+
+    if (criteria.brand() != null && !criteria.brand().isBlank()) {
+        specification = specification.and(
+                ProductSpecification.hasBrand(criteria.brand())
+        );
+    }
+
+    if (criteria.name() != null && !criteria.name().isBlank()) {
+        specification = specification.and(
+                ProductSpecification.hasName(criteria.name())
+        );
+    }
+
+    if (criteria.category() != null && !criteria.category().isBlank()) {
+        specification = specification.and(
+                ProductSpecification.hasCategory(criteria.category())
+        );
+    }
+
+    return productRepository.count(specification);
 	}
 
 }

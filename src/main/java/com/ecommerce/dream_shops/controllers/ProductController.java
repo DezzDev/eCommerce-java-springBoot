@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -115,9 +114,33 @@ public class ProductController {
 	@GetMapping("/search")
 	public ResponseEntity<ApiResponse> searchProducts(@ModelAttribute ProductSearchCriteria criteria) {
 		
-		List<ProductDto> products = productService.searchProducts(criteria);
+		try {
+			List<ProductDto> products = productService.searchProducts(criteria);
+			if (products.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse("No products found", null));
+			}
 		return ResponseEntity.ok(new ApiResponse("Success", products));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ApiResponse(e.getMessage(), null));
+		}
 	}
+
+	@GetMapping("/count")
+	public ResponseEntity<ApiResponse> countProducts(
+		@ModelAttribute ProductSearchCriteria criteria) {
+		
+		try {
+				Long count = productService.countProducts(criteria);
+				
+				return ResponseEntity.ok(new ApiResponse("Success", count));
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponse(e.getMessage(), null));
+			}
+	}
+	
 	
 	
 } 
