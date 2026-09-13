@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,11 +17,14 @@ import com.ecommerce.dream_shops.dto.request.ProductUpdateRequest;
 import com.ecommerce.dream_shops.dto.responses.ApiResponse;
 import com.ecommerce.dream_shops.exceptions.ProductNotFoundException;
 import com.ecommerce.dream_shops.service.product.IProductService;
+import com.ecommerce.dream_shops.utils.ProductSearchCriteria;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -107,5 +111,13 @@ public class ProductController {
 				.body(new ApiResponse(e.getMessage(), null));
 		}
 	}
+
+	@GetMapping("/search")
+	public ResponseEntity<ApiResponse> searchProducts(@ModelAttribute ProductSearchCriteria criteria) {
+		
+		List<ProductDto> products = productService.searchProducts(criteria);
+		return ResponseEntity.ok(new ApiResponse("Success", products));
+	}
+	
 	
 } 

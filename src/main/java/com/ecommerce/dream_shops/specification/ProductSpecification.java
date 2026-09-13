@@ -25,6 +25,6 @@ public class ProductSpecification {
 			Join<Product, Category> categoryJoin = root.join("category");
 
 			return criteriaBuilder.equal(categoryJoin.get("name"), category);
-		}
+		};
 	}
 }
